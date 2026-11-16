@@ -1,0 +1,50 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+.civic-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  max-width: 22rem;
+}
+
+.password-bar {
+  height: 0.4rem;
+  flex: 1 1 0%;
+  border-radius: 9999px;
+  background-color: #334155;
+}
+
+.password-bar.active-weak {
+  background-color: #ef4444;
+}
+
+.password-bar.active-medium {
+  background-color: #f59e0b;
+}
+
+.password-bar.active-strong {
+  background-color: #22c55e;
+}
+
+.media-fallback {
+  border: 1px dashed #475569;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #cbd5e1;
+}

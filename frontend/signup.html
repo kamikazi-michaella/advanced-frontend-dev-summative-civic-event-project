@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up | CivicEvents+</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-900">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+      <a href="index.html" class="text-xl font-bold text-cyan-300">CivicEvents+</a>
+      <a href="login.html" class="text-sm text-slate-200 hover:text-cyan-300">Already have an account? Log in</a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-lg px-4 py-10">
+    <section class="rounded-lg border border-slate-800 bg-slate-900 p-6">
+      <h1 class="text-2xl font-bold">Create an account</h1>
+      <p class="mt-2 text-sm text-slate-400">Join CivicEvents+ to manage your community activities.</p>
+
+      <div id="signup-error" class="mt-4 hidden" role="alert"></div>
+
+      <form id="signup-form" class="mt-5 space-y-4" novalidate>
+        <div>
+          <label for="signup-full-name" class="mb-1 block text-sm font-medium">Full name</label>
+          <input id="signup-full-name" name="full_name" type="text" autocomplete="name"
+            class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+            aria-describedby="signup-full-name-error">
+          <p id="signup-full-name-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+        </div>
+
+        <div>
+          <label for="signup-email" class="mb-1 block text-sm font-medium">Email</label>
+          <input id="signup-email" name="email" type="email" autocomplete="email"
+            class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+            aria-describedby="signup-email-error">
+          <p id="signup-email-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+        </div>
+
+        <div>
+          <label for="signup-password" class="mb-1 block text-sm font-medium">Password</label>
+          <div class="flex gap-2">
+            <input id="signup-password" name="password" type="password" autocomplete="new-password"
+              class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+              aria-describedby="signup-password-help signup-password-error">
+            <button id="toggle-signup-password" type="button"
+              class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">Show</button>
+          </div>
+          <div class="mt-2 flex gap-1" aria-hidden="true">
+            <span class="password-bar"></span>
+            <span class="password-bar"></span>
+            <span class="password-bar"></span>
+            <span class="password-bar"></span>
+            <span class="password-bar"></span>
+          </div>
+          <p id="password-strength-label" class="mt-1 text-xs text-slate-400"></p>
+          <p id="signup-password-help" class="mt-1 text-xs text-slate-400">
+            Use at least 8 characters with an uppercase letter, lowercase letter, number, and special character.
+          </p>
+          <p id="signup-password-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+        </div>
+
+        <div>
+          <label for="signup-confirm-password" class="mb-1 block text-sm font-medium">Confirm password</label>
+          <div class="flex gap-2">
+            <input id="signup-confirm-password" name="confirm_password" type="password" autocomplete="new-password"
+              class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+              aria-describedby="signup-confirm-password-error">
+            <button id="toggle-signup-confirm-password" type="button"
+              class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">Show</button>
+          </div>
+          <p id="signup-confirm-password-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+        </div>
+
+        <div>
+          <label for="signup-role" class="mb-1 block text-sm font-medium">Account type</label>
+          <select id="signup-role" name="role"
+            class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+            aria-describedby="signup-role-help">
+            <option value="user">Member</option>
+            <option value="admin">Admin (demo only)</option>
+          </select>
+          <p id="signup-role-help" class="mt-1 text-xs text-slate-400">
+            The admin option is included only so the demo can create an admin account. In a real system, admin roles
+            would be assigned by an existing administrator, never through public signup.
+          </p>
+        </div>
+
+        <button id="signup-submit" type="submit"
+          class="w-full rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
+          Create account
+        </button>
+      </form>
+
+      <p class="mt-5 text-sm text-slate-400">
+        Already registered? <a href="login.html" class="text-cyan-300 hover:underline">Log in</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-900">
+    <div class="mx-auto max-w-6xl px-4 py-5 text-sm text-slate-400">
+      CivicEvents+ community desk. Contact the civic office if you need account help.
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicEvents+</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-900">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+      <a href="index.html" class="text-xl font-bold text-cyan-300">CivicEvents+</a>
+      <nav aria-label="Account links" class="flex items-center gap-3 text-sm">
+        <a href="login.html" class="rounded px-3 py-2 text-slate-200 hover:bg-slate-800">Log in</a>
+        <a href="signup.html" class="rounded bg-cyan-500 px-3 py-2 font-semibold text-slate-950 hover:bg-cyan-400">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-12">
+    <section class="rounded-lg border border-slate-800 bg-slate-900 p-6 md:p-10">
+      <p class="mb-3 text-sm font-semibold text-cyan-300">Community events in one place</p>
+      <h1 class="max-w-3xl text-3xl font-bold md:text-5xl">Welcome to CivicEvents+</h1>
+      <p class="mt-4 max-w-2xl text-base text-slate-300">
+        Log in to browse events, register for activities, hear announcements, and watch community promos.
+        Content is available to registered members only.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="login.html" class="rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400">Log in</a>
+        <a href="signup.html" class="rounded border border-slate-600 px-4 py-2 font-semibold text-slate-100 hover:bg-slate-800">Create an account</a>
+      </div>
+    </section>
+
+    <section class="mt-6 grid gap-4 md:grid-cols-3">
+      <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+        <h2 class="text-lg font-semibold text-cyan-300">Events</h2>
+        <p class="mt-2 text-sm text-slate-300">Find upcoming events and manage your registrations.</p>
+      </article>
+      <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+        <h2 class="text-lg font-semibold text-cyan-300">Announcements</h2>
+        <p class="mt-2 text-sm text-slate-300">Listen to short audio updates from the civic team.</p>
+      </article>
+      <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+        <h2 class="text-lg font-semibold text-cyan-300">Promos</h2>
+        <p class="mt-2 text-sm text-slate-300">Watch community promos with captions and transcripts.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 bg-slate-900">
+    <div class="mx-auto max-w-6xl px-4 py-5 text-sm text-slate-400">
+      CivicEvents+ community desk. Contact the civic office for help with your account.
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
