@@ -1,6 +1,7 @@
 var civicCurrentEvent = null;
 var civicCurrentEventId = "";
 var civicRegistrationActive = false;
+var civicFeedbackNotice = "";
 
 function civicEventDetailShowError(message) {
   document.getElementById("event-loading").classList.add("hidden");
@@ -88,7 +89,6 @@ function civicEventDetailLoadAttendees() {
 function civicEventDetailSetRegistrationButtons(registered) {
   var registerButton = document.getElementById("register-button");
   var cancelButton = document.getElementById("cancel-registration-button");
-  var message = document.getElementById("registration-message");
 
   civicRegistrationActive = registered;
 
@@ -101,6 +101,8 @@ function civicEventDetailSetRegistrationButtons(registered) {
     cancelButton.classList.add("hidden");
     civicShowMessage("registration-message", "You are not registered for this event yet.", "info");
   }
+
+  civicEventDetailLoadFeedback(registered);
 }
 
 function civicEventDetailLoadRegistration() {
@@ -170,6 +172,203 @@ function civicEventDetailCancel() {
     });
 }
 
+function civicFeedbackFormHtml(feedback) {
+  var ratingOptions = "";
+  var i;
+  for (i = 5; i >= 1; i--) {
+    var selected = "";
+    if (feedback && Number(feedback.rating) === i) {
+      selected = " selected";
+    } else if (!feedback && i === 5) {
+      selected = " selected";
+    }
+    ratingOptions = ratingOptions + '<option value="' + i + '"' + selected + '>' + i + ' star' + (i === 1 ? "" : "s") + "</option>";
+  }
+
+  var comment = "";
+  if (feedback && feedback.comment) {
+    comment = feedback.comment;
+  }
+
+  var notice = "";
+  if (civicFeedbackNotice) {
+    notice = '<div class="mb-3 rounded border border-emerald-700 bg-emerald-950 px-3 py-2 text-sm text-emerald-200" role="status">' +
+      civicEscapeHtml(civicFeedbackNotice) + "</div>";
+    civicFeedbackNotice = "";
+  }
+
+  return notice +
+    '<div id="feedback-message" class="mb-3 hidden" role="alert"></div>' +
+    '<form id="feedback-form" class="space-y-3" novalidate>' +
+    "<div>" +
+    '<label for="feedback-rating" class="mb-1 block text-sm font-medium">Rating</label>' +
+    '<select id="feedback-rating" class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2">' +
+    ratingOptions + "</select>" +
+    "</div>" +
+    "<div>" +
+    '<label for="feedback-comment" class="mb-1 block text-sm font-medium">Comment</label>' +
+    '<textarea id="feedback-comment" rows="4" class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2">' +
+    civicEscapeHtml(comment) + "</textarea>" +
+    '<p id="feedback-comment-error" class="mt-1 min-h-4 text-sm text-red-300"></p>' +
+    "</div>" +
+    '<button id="feedback-submit" type="submit" class="rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60">' +
+    (feedback ? "Update feedback" : "Submit feedback") + "</button>" +
+    "</form>";
+}
+
+function civicFeedbackSubmit(feedbackId) {
+  var rating = Number($("#feedback-rating").val());
+  var comment = $("#feedback-comment").val().trim();
+  var valid = true;
+  var button = document.getElementById("feedback-submit");
+
+  CivicUI.showMessage("feedback-message", "", "error");
+  CivicUI.showFieldError("feedback-comment", "");
+
+  if (!rating || rating < 1 || rating > 5) {
+    CivicUI.showMessage("feedback-message", "Choose a rating from 1 to 5.", "error");
+    valid = false;
+  }
+  if (!comment) {
+    CivicUI.showFieldError("feedback-comment", "Add a short comment about the event.");
+    valid = false;
+  }
+  if (!valid) {
+    return;
+  }
+
+  var request;
+  if (feedbackId) {
+    request = CivicAPI.putJson("/event-feedback/" + encodeURIComponent(feedbackId), {
+      rating: rating,
+      comment: comment
+    });
+  } else {
+    request = CivicAPI.postJson("/event-feedback", {
+      event_id: civicCurrentEventId,
+      rating: rating,
+      comment: comment
+    });
+  }
+
+  civicSetLoading(button, true, "Saving...");
+
+  request
+    .done(function () {
+      civicFeedbackNotice = feedbackId ? "Feedback updated successfully." : "Feedback submitted successfully.";
+      civicEventDetailLoadFeedback(true);
+    })
+    .fail(function (xhr) {
+      civicSetLoading(button, false);
+      var error = CivicAPI.handleFail(xhr, "Could not save your feedback.");
+      if (error.status === 409) {
+        error.message = "You already submitted feedback for this event. Reload the page to edit it.";
+      }
+      CivicUI.showMessage("feedback-message", error.message, "error");
+    });
+}
+
+function civicEventDetailShowUserFeedback(feedback) {
+  var content = document.getElementById("feedback-content");
+  content.innerHTML = civicFeedbackFormHtml(feedback);
+  $("#feedback-form").on("submit", function (event) {
+    event.preventDefault();
+    civicFeedbackSubmit(feedback ? feedback.id : "");
+  });
+}
+
+function civicEventDetailLoadAdminFeedback() {
+  var content = document.getElementById("feedback-content");
+  content.innerHTML = '<p class="text-sm text-slate-400">Loading feedback...</p>';
+
+  CivicAPI.get("/event-feedback/event/" + encodeURIComponent(civicCurrentEventId) + "")
+    .done(function (response) {
+      var feedbacks = response.data || [];
+      var html = "";
+      var sum = 0;
+      var average = 0;
+      var i;
+
+      if (feedbacks.length === 0) {
+        content.innerHTML = '<p class="text-sm text-slate-400">No feedback has been submitted for this event yet.</p>';
+        return;
+      }
+
+      for (i = 0; i < feedbacks.length; i++) {
+        sum = sum + Number(feedbacks[i].rating || 0);
+      }
+      average = Math.round((sum / feedbacks.length) * 10) / 10;
+
+      html = '<div class="mb-4 rounded border border-slate-700 bg-slate-950 p-3 text-sm">' +
+        "Average rating: <strong class=\"text-cyan-300\">" + average + " / 5</strong> from " +
+        feedbacks.length + " response" + (feedbacks.length === 1 ? "" : "s") + "</div>" +
+        '<div class="overflow-x-auto"><table class="min-w-full border-collapse text-left text-sm">' +
+        '<thead><tr class="border-b border-slate-700 text-slate-300">' +
+        '<th class="px-3 py-2">Member</th><th class="px-3 py-2">Rating</th>' +
+        '<th class="px-3 py-2">Comment</th><th class="px-3 py-2">Submitted</th></tr></thead><tbody>';
+
+      for (i = 0; i < feedbacks.length; i++) {
+        html = html + '<tr class="border-b border-slate-800">' +
+          '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].full_name || "Member") + "</td>" +
+          '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].rating) + " / 5</td>" +
+          '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].comment || "") + "</td>" +
+          '<td class="px-3 py-2">' + civicEscapeHtml(civicFormatDate(feedbacks[i].created_at)) + "</td>" +
+          "</tr>";
+      }
+
+      html = html + "</tbody></table></div>";
+      content.innerHTML = html;
+    })
+    .fail(function (xhr) {
+      var error = CivicAPI.handleFail(xhr, "Could not load event feedback.");
+      content.innerHTML = '<div class="rounded border border-red-700 bg-red-950 px-3 py-2 text-sm text-red-200" role="alert">' +
+        civicEscapeHtml(error.message) + "</div>";
+    });
+}
+
+function civicEventDetailLoadFeedback(registered) {
+  var section = document.getElementById("feedback-section");
+
+  // ROLE GUARD: admins see all event feedback and the average rating.
+  // Admins do not submit attendee feedback.
+  if (CivicAuth.isAdmin()) {
+    section.classList.remove("hidden");
+    civicEventDetailLoadAdminFeedback();
+    return;
+  }
+
+  // ROLE GUARD: normal users only see the feedback form when they are registered.
+  // The per-event feedback endpoint is admin only, so members cannot load all feedback or an average.
+  if (!registered) {
+    section.classList.add("hidden");
+    document.getElementById("feedback-content").innerHTML = "";
+    return;
+  }
+
+  section.classList.remove("hidden");
+  document.getElementById("feedback-content").innerHTML = '<p class="text-sm text-slate-400">Loading your feedback...</p>';
+
+  CivicAPI.get("/event-feedback/my-feedback")
+    .done(function (response) {
+      var feedbacks = response.data || [];
+      var ownFeedback = null;
+      var i;
+
+      for (i = 0; i < feedbacks.length; i++) {
+        if (feedbacks[i].event_id === civicCurrentEventId) {
+          ownFeedback = feedbacks[i];
+        }
+      }
+      civicEventDetailShowUserFeedback(ownFeedback);
+    })
+    .fail(function (xhr) {
+      var error = CivicAPI.handleFail(xhr, "Could not load your feedback.");
+      document.getElementById("feedback-content").innerHTML =
+        '<div class="rounded border border-red-700 bg-red-950 px-3 py-2 text-sm text-red-200" role="alert">' +
+        civicEscapeHtml(error.message) + "</div>";
+    });
+}
+
 function civicEventDetailDelete() {
   if (!window.confirm("Delete this event? This cannot be undone.")) {
     return;
@@ -221,6 +420,7 @@ function civicEventDetailLoad() {
 
       if (CivicAuth.isAdmin()) {
         civicEventDetailLoadAttendees();
+        civicEventDetailLoadFeedback(true);
       } else {
         civicEventDetailLoadRegistration();
       }

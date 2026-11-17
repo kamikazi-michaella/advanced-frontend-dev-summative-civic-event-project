@@ -21,7 +21,7 @@ function civicApiSettings(options) {
   if (options.data !== undefined) {
     settings.data = options.data;
   }
-  if (options.contentType) {
+  if (options.contentType !== undefined) {
     settings.contentType = options.contentType;
   }
   if (options.processData === false) {
