@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin dashboard | CivicEvents+</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100" data-page="admin-dashboard" data-require-admin="true">
+  <header class="border-b border-slate-800 bg-slate-900">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-300">CivicEvents+</a>
+      <form id="global-search-form" class="order-3 flex w-full gap-2 sm:order-2 sm:w-auto sm:flex-1" role="search">
+        <label for="global-search-input" class="sr-only">Search events</label>
+        <input id="global-search-input" type="search" placeholder="Search events"
+          class="min-w-0 flex-1 rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm">
+        <button type="submit" class="rounded bg-cyan-500 px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Search</button>
+      </form>
+      <nav aria-label="Main navigation" class="order-2 flex flex-wrap items-center gap-1 text-sm sm:order-3">
+        <a data-nav="events" href="events.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Events</a>
+        <a data-nav="announcements" href="announcements.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Announcements</a>
+        <a data-nav="promos" href="promos.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Promos</a>
+        <a data-nav="notifications" href="notifications.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">
+          Notifications <span id="notification-count" class="hidden rounded bg-red-600 px-1.5 py-0.5 text-xs text-white">0</span>
+        </a>
+        <a data-admin-only data-nav="admin-dashboard" href="admin-dashboard.html" class="hidden rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Admin dashboard</a>
+        <a data-member-only data-nav="dashboard" href="dashboard.html" class="hidden rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Dashboard</a>
+        <div id="profile-menu-wrap" class="relative">
+          <button id="profile-menu-button" type="button" aria-expanded="false" aria-controls="profile-menu"
+            class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Profile</button>
+          <div id="profile-menu" class="absolute right-0 z-20 mt-2 hidden w-52 rounded border border-slate-700 bg-slate-900 p-2 shadow-lg">
+            <p id="profile-menu-name" class="px-2 py-1 text-sm font-semibold text-cyan-300"></p>
+            <p id="header-user-role" class="px-2 pb-2 text-xs text-slate-400"></p>
+            <a href="profile.html" class="block rounded px-2 py-2 text-sm hover:bg-slate-800">My profile</a>
+            <button type="button" class="logout-button block w-full rounded px-2 py-2 text-left text-sm hover:bg-slate-800">Log out</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    <div id="page-message" class="mb-4 hidden" role="alert"></div>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-3xl font-bold">Admin dashboard</h1>
+        <p class="mt-1 text-sm text-slate-400">A summary of users, events, registrations, and content.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="admin-users.html" class="rounded border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800">Manage users</a>
+        <a href="event-form.html" class="rounded bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Create event</a>
+      </div>
+    </div>
+
+    <div id="admin-dashboard-loading" class="mt-6 rounded border border-slate-800 bg-slate-900 p-6 text-slate-300">Loading dashboard...</div>
+    <div id="admin-dashboard-error" class="mt-6 hidden" role="alert"></div>
+
+    <section id="admin-dashboard-content" class="mt-6 hidden">
+      <h2 class="text-xl font-semibold">Users</h2>
+      <div class="mt-3 grid gap-4 sm:grid-cols-3">
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Total users</p>
+          <p id="admin-total-users" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Active users</p>
+          <p id="admin-active-users" class="mt-2 text-3xl font-bold text-emerald-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Inactive users</p>
+          <p id="admin-inactive-users" class="mt-2 text-3xl font-bold text-amber-300">0</p>
+        </article>
+      </div>
+
+      <h2 class="mt-8 text-xl font-semibold">Events and registrations</h2>
+      <div class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Total events</p>
+          <p id="admin-total-events" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Upcoming events</p>
+          <p id="admin-upcoming-events" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Past events</p>
+          <p id="admin-past-events" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Registrations</p>
+          <p id="admin-registrations" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Feedback responses</p>
+          <p id="admin-feedbacks" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Notifications</p>
+          <p id="admin-notifications" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Promos</p>
+          <p id="admin-promos" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+        <article class="rounded-lg border border-slate-800 bg-slate-900 p-5">
+          <p class="text-sm text-slate-400">Announcements</p>
+          <p id="admin-announcements" class="mt-2 text-3xl font-bold text-cyan-300">0</p>
+        </article>
+      </div>
+
+      <section class="mt-8 rounded-lg border border-slate-800 bg-slate-900 p-5" aria-labelledby="growth-heading">
+        <h2 id="growth-heading" class="text-xl font-semibold">User growth</h2>
+        <p class="mt-1 text-sm text-slate-400">New users per month over the last six months.</p>
+        <div id="user-growth-chart" class="mt-5 hidden min-h-56 items-end gap-3 overflow-x-auto"></div>
+        <p id="user-growth-empty" class="mt-4 hidden text-sm text-slate-400">No user growth data is available yet.</p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="mt-10 border-t border-slate-800 bg-slate-900">
+    <div class="mx-auto max-w-6xl px-4 py-5 text-sm text-slate-400">
+      CivicEvents+ administration. Contact the civic office for help with member accounts.
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
