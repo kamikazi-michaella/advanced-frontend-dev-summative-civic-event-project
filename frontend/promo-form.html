@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promo form | CivicEvents+</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100" data-page="promos" data-require-admin="true">
+  <header class="border-b border-slate-800 bg-slate-900">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3">
+      <a href="admin-dashboard.html" class="text-xl font-bold text-cyan-300">CivicEvents+</a>
+      <form id="global-search-form" class="order-3 flex w-full gap-2 sm:order-2 sm:w-auto sm:flex-1" role="search">
+        <label for="global-search-input" class="sr-only">Search events</label>
+        <input id="global-search-input" type="search" placeholder="Search events"
+          class="min-w-0 flex-1 rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm">
+        <button type="submit" class="rounded bg-cyan-500 px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Search</button>
+      </form>
+      <nav aria-label="Main navigation" class="order-2 flex flex-wrap items-center gap-1 text-sm sm:order-3">
+        <a data-nav="events" href="events.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Events</a>
+        <a data-nav="announcements" href="announcements.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Announcements</a>
+        <a data-nav="promos" href="promos.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Promos</a>
+        <a data-nav="notifications" href="notifications.html" class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">
+          Notifications <span id="notification-count" class="hidden rounded bg-red-600 px-1.5 py-0.5 text-xs text-white">0</span>
+        </a>
+        <a data-admin-only data-nav="admin-dashboard" href="admin-dashboard.html" class="hidden rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Admin dashboard</a>
+        <a data-member-only data-nav="dashboard" href="dashboard.html" class="hidden rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Dashboard</a>
+        <div id="profile-menu-wrap" class="relative">
+          <button id="profile-menu-button" type="button" aria-expanded="false" aria-controls="profile-menu"
+            class="rounded px-2 py-1 text-slate-300 hover:bg-slate-800 hover:text-white">Profile</button>
+          <div id="profile-menu" class="absolute right-0 z-20 mt-2 hidden w-52 rounded border border-slate-700 bg-slate-900 p-2 shadow-lg">
+            <p id="profile-menu-name" class="px-2 py-1 text-sm font-semibold text-cyan-300"></p>
+            <p id="header-user-role" class="px-2 pb-2 text-xs text-slate-400"></p>
+            <a href="profile.html" class="block rounded px-2 py-2 text-sm hover:bg-slate-800">My profile</a>
+            <button type="button" class="logout-button block w-full rounded px-2 py-2 text-left text-sm hover:bg-slate-800">Log out</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-4 py-8">
+    <div id="page-message" class="mb-4 hidden" role="alert"></div>
+    <p class="mb-4"><a href="promos.html" class="text-sm text-cyan-300 hover:underline">Back to promos</a></p>
+    <h1 id="promo-form-title" class="text-3xl font-bold">Create promo</h1>
+    <p class="mt-1 text-sm text-slate-400">Add a short promo video and the text used for captions.</p>
+
+    <div id="promo-form-loading" class="mt-6 hidden rounded border border-slate-800 bg-slate-900 p-6 text-slate-300">Loading promo...</div>
+    <div id="promo-form-error" class="mt-4 hidden" role="alert"></div>
+
+    <form id="promo-form" class="mt-6 space-y-4 rounded-lg border border-slate-800 bg-slate-900 p-6" novalidate>
+      <div>
+        <label for="promo-title-input" class="mb-1 block text-sm font-medium">Title</label>
+        <input id="promo-title-input" name="title" type="text"
+          class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          aria-describedby="promo-title-input-error">
+        <p id="promo-title-input-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+      </div>
+
+      <div>
+        <label for="promo-description-input" class="mb-1 block text-sm font-medium">Description</label>
+        <textarea id="promo-description-input" name="description" rows="4"
+          class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          aria-describedby="promo-description-input-error"></textarea>
+        <p id="promo-description-input-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+      </div>
+
+      <div>
+        <label for="promo-caption-input" class="mb-1 block text-sm font-medium">Caption text</label>
+        <textarea id="promo-caption-input" name="caption_text" rows="5"
+          class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          aria-describedby="promo-caption-help promo-caption-input-error"></textarea>
+        <p id="promo-caption-help" class="mt-1 text-xs text-slate-400">
+          The backend stores caption text, not a caption file. The detail page builds a WebVTT track from this text.
+        </p>
+        <p id="promo-caption-input-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+      </div>
+
+      <div>
+        <label for="promo-video-input" class="mb-1 block text-sm font-medium">Video file</label>
+        <input id="promo-video-input" name="video" type="file" accept=".mp4"
+          class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          aria-describedby="promo-video-help promo-video-input-error">
+        <p id="promo-video-help" class="mt-1 text-xs text-slate-400">
+          MP4 only, maximum 8 MB. Use H.264 video with AAC audio for the most reliable browser playback. The backend
+          also accepts MOV, AVI, and MKV, but browsers do not reliably play those formats.
+        </p>
+        <p id="promo-video-selected" class="mt-1 text-xs text-slate-400"></p>
+        <p id="promo-video-input-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
+      </div>
+
+      <div id="promo-current-video" class="hidden rounded border border-slate-700 bg-slate-950 p-3">
+        <p class="text-sm text-slate-400">Current video</p>
+        <video id="promo-current-video-player" controls preload="metadata" class="mt-2 w-full bg-black"></video>
+        <p class="mt-1 text-xs text-slate-500"><a id="promo-current-video-link" href="#" class="text-cyan-300 hover:underline">Direct video link</a></p>
+      </div>
+
+      <div id="promo-video-preview-wrap" class="hidden">
+        <p class="mb-2 text-sm text-slate-400">New video preview</p>
+        <video id="promo-video-preview" controls preload="metadata" class="w-full rounded border border-slate-700 bg-black"></video>
+      </div>
+
+      <div class="rounded border border-cyan-800 bg-cyan-950 p-3 text-sm text-cyan-100">
+        Creating a promo always publishes it because the backend ignores the published field on create. Use the publish
+        and unpublish buttons on the promo detail page after creation. Editing can replace the video file.
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button id="promo-form-submit" type="submit"
+          class="rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
+          Save promo
+        </button>
+        <a href="promos.html" class="rounded border border-slate-600 px-4 py-2 hover:bg-slate-800">Cancel</a>
+      </div>
+    </form>
+  </main>
+
+  <footer class="mt-10 border-t border-slate-800 bg-slate-900">
+    <div class="mx-auto max-w-6xl px-4 py-5 text-sm text-slate-400">
+      Need help? Contact the civic office. CivicEvents+ keeps members informed about local activities.
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/promo-form.js"></script>
+</body>
+</html>
