@@ -96,6 +96,4 @@ The frontend works around limitations in the provided backend. These behaviors a
 - Role changes are not supported by the backend. Admin user management only enables and disables accounts.
 - There is no public content browsing. Every content endpoint requires login.
 
-## Video demo
 
-Add the YouTube link to `video-demo/README.md` when the demo is ready.
