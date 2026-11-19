@@ -22,14 +22,6 @@ function civicEventDateKey(value) {
   return date.getFullYear() + "-" + month + "-" + day;
 }
 
-function civicEventsShortText(value) {
-  var text = value || "";
-  if (text.length > 150) {
-    return text.substring(0, 150) + "...";
-  }
-  return text;
-}
-
 function civicEventsApplyFilters(resetPage) {
   var search = $("#events-search").val().trim().toLowerCase();
   var location = $("#events-location").val().trim().toLowerCase();
@@ -73,18 +65,18 @@ function civicEventsCard(event, isAdmin) {
     imageUrl = event.metadata.image_url;
   }
 
-  var image = '<div class="flex h-40 items-center justify-center bg-slate-800 text-sm text-slate-400">No image available</div>';
+  var image = '<div class="flex h-24 w-full items-center justify-center rounded-md bg-stone-100 text-xs text-stone-600 sm:w-28">No image</div>';
   if (imageUrl) {
     image = '<img src="' + civicEscapeHtml(imageUrl) + '" alt="Event image for ' + civicEscapeHtml(event.title) +
-      '" class="h-40 w-full object-cover" loading="lazy">';
+      '" class="h-24 w-full rounded-md object-cover sm:w-28" loading="lazy">';
   }
 
   var status = "";
   if (isAdmin) {
     if (event.published === false) {
-      status = '<span class="rounded bg-amber-900 px-2 py-1 text-xs text-amber-200">Unpublished</span>';
+      status = '<span class="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Draft</span>';
     } else {
-      status = '<span class="rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200">Published</span>';
+      status = '<span class="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">Live</span>';
     }
   }
 
@@ -92,26 +84,24 @@ function civicEventsCard(event, isAdmin) {
   // ROLE GUARD: the edit link is only rendered for admins. The backend also blocks non-admins.
   if (isAdmin) {
     edit = '<a href="event-form.html?id=' + encodeURIComponent(event.id) +
-      '" class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">Edit</a>';
+      '" class="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">Edit</a>';
   }
 
-  var card = '<article class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">' +
+  return '<article class="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">' +
     image +
-    '<div class="p-4">' +
-    '<div class="flex items-start justify-between gap-2">' +
-    '<h2 class="text-lg font-semibold text-cyan-300">' + civicEscapeHtml(event.title) + '</h2>' +
+    '<div class="min-w-0 flex-1">' +
+    '<div class="flex flex-wrap items-center gap-2">' +
+    '<h2 class="font-serif text-xl text-stone-900">' + civicEscapeHtml(event.title) + "</h2>" +
     status +
-    '</div>' +
-    '<p class="mt-2 text-sm text-slate-300">' + civicEscapeHtml(civicFormatDate(event.starts_at)) + '</p>' +
-    '<p class="mt-1 text-sm text-slate-400">' + civicEscapeHtml(event.location || "Location not provided") + '</p>' +
-    '<p class="mt-3 text-sm text-slate-300">' + civicEscapeHtml(civicEventsShortText(event.description)) + '</p>' +
-    '<div class="mt-4 flex flex-wrap gap-2">' +
+    "</div>" +
+    '<p class="mt-1 text-sm text-stone-600">' + civicEscapeHtml(civicFormatDate(event.starts_at)) + "</p>" +
+    '<p class="text-sm text-stone-500">' + civicEscapeHtml(event.location || "Location not provided") + "</p>" +
+    "</div>" +
+    '<div class="flex shrink-0 flex-wrap gap-2">' +
     '<a href="event-detail.html?id=' + encodeURIComponent(event.id) +
-    '" class="rounded bg-cyan-500 px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">View event</a>' +
+    '" class="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800">View event</a>' +
     edit +
-    '</div></div></article>';
-
-  return card;
+    "</div></article>";
 }
 
 function civicEventsRender() {
@@ -139,7 +129,7 @@ function civicEventsRender() {
 
   list.innerHTML = html;
   document.getElementById("events-count").textContent =
-    "Showing " + civicEventsFiltered.length + " event" + (civicEventsFiltered.length === 1 ? "" : "s") + ".";
+    civicEventsFiltered.length + " event" + (civicEventsFiltered.length === 1 ? "" : "s");
 
   if (civicEventsFiltered.length === 0) {
     document.getElementById("events-empty").classList.remove("hidden");
@@ -149,11 +139,11 @@ function civicEventsRender() {
 
   html = "";
   for (i = 1; i <= totalPages; i++) {
-    var style = "rounded border px-3 py-2 text-sm ";
+    var style = "rounded-md border px-3 py-2 text-sm ";
     if (i === civicEventsPage) {
-      style = style + "border-cyan-500 bg-cyan-500 font-semibold text-slate-950";
+      style = style + "border-emerald-700 bg-emerald-700 font-medium text-white";
     } else {
-      style = style + "border-slate-600 text-slate-200 hover:bg-slate-800";
+      style = style + "border-stone-300 bg-white text-stone-700 hover:bg-stone-100";
     }
     html = html + '<button type="button" class="' + style + '" data-page="' + i + '">' + i + "</button>";
   }
@@ -202,6 +192,7 @@ $(document).ready(function () {
 
   $("#events-search").val(CivicUI.getQueryParam("q"));
   $("#global-search-input").val(CivicUI.getQueryParam("q"));
+  $("#mobile-global-search-input").val(CivicUI.getQueryParam("q"));
 
   $("#events-filter-form").on("submit", function (event) {
     event.preventDefault();

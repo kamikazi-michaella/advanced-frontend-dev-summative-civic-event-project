@@ -4,74 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="CivicEvents+ community events, announcements, and promos.">
-  <title>Log in | CivicEvents+</title>
+  <title>Sign in | CivicEvents+</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100">
-  <header class="border-b border-slate-800 bg-slate-900">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-      <a href="index.html" class="text-xl font-bold text-cyan-300">CivicEvents+</a>
-      <a href="signup.html" class="text-sm text-slate-200 hover:text-cyan-300">Need an account? Sign up</a>
-    </div>
-  </header>
+<body class="min-h-screen bg-stone-50 text-stone-900">
+  <main class="grid lg:min-h-screen lg:grid-cols-2">
+    <section class="flex flex-col justify-between bg-emerald-900 px-6 py-10 text-white md:px-12 md:py-14">
+      <a href="index.html" class="font-serif text-2xl font-bold">CivicEvents+</a>
+      <div class="my-12 max-w-lg lg:my-0">
+        <p class="text-sm font-semibold uppercase tracking-wide text-emerald-200">Member access</p>
+        <h1 class="mt-4 font-serif text-4xl leading-tight md:text-5xl">Your community desk, ready when you are.</h1>
+      </div>
+      <p class="text-sm text-emerald-200">One account for events, audio notices, and promos.</p>
+    </section>
 
-  <main class="mx-auto max-w-md px-4 py-10">
-    <section class="rounded-lg border border-slate-800 bg-slate-900 p-6">
-      <h1 class="text-2xl font-bold">Log in</h1>
-      <p class="mt-2 text-sm text-slate-400">Use the email and password from your CivicEvents+ account.</p>
+    <section class="flex items-center bg-stone-50 px-5 py-10 md:px-12">
+      <div class="mx-auto w-full max-w-md">
+        <h2 class="font-serif text-3xl">Sign in</h2>
+        <p class="mt-2 text-sm text-stone-600">Use your CivicEvents+ email and password.</p>
 
-      <div id="login-error" class="mt-4 hidden" role="alert"></div>
+        <div id="login-error" class="mt-5 hidden" role="alert"></div>
 
-      <form id="login-form" class="mt-5 space-y-4" novalidate>
-        <div>
-          <label for="login-email" class="mb-1 block text-sm font-medium">Email</label>
-          <input id="login-email" name="email" type="email" autocomplete="email"
-            class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-            aria-describedby="login-email-error">
-          <p id="login-email-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
-        </div>
-
-        <div>
-          <label for="login-password" class="mb-1 block text-sm font-medium">Password</label>
-          <div class="flex gap-2">
-            <input id="login-password" name="password" type="password" autocomplete="current-password"
-              class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-              aria-describedby="login-password-error">
-            <button id="toggle-login-password" type="button"
-              class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">Show</button>
+        <form id="login-form" class="mt-6 space-y-5" novalidate>
+          <div>
+            <label for="login-email" class="mb-1.5 block text-sm font-medium text-stone-700">Email</label>
+            <input id="login-email" name="email" type="email" autocomplete="email"
+              class="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-stone-900"
+              aria-describedby="login-email-error">
+            <p id="login-email-error" class="mt-1 min-h-4 text-sm text-red-700"></p>
           </div>
-          <p id="login-password-error" class="mt-1 min-h-4 text-sm text-red-300"></p>
-        </div>
 
-        <div>
-          <label for="login-remember" class="flex items-start gap-2 text-sm text-slate-300">
-            <input id="login-remember" type="checkbox" class="mt-1">
-            <span>Remember me on this device</span>
-          </label>
-          <p class="mt-2 text-xs text-slate-400">
-            Remember me stores your login in localStorage so it survives closing the browser. This is less secure than
-            the default sessionStorage option, so only use it on a trusted personal device.
-          </p>
-        </div>
+          <div>
+            <label for="login-password" class="mb-1.5 block text-sm font-medium text-stone-700">Password</label>
+            <div class="flex gap-2">
+              <input id="login-password" name="password" type="password" autocomplete="current-password"
+                class="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-stone-900"
+                aria-describedby="login-password-error">
+              <button id="toggle-login-password" type="button"
+                class="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">Show</button>
+            </div>
+            <p id="login-password-error" class="mt-1 min-h-4 text-sm text-red-700"></p>
+          </div>
 
-        <button id="login-submit" type="submit"
-          class="w-full rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60">
-          Log in
-        </button>
-      </form>
+          <div>
+            <label for="login-remember" class="flex items-start gap-2 text-sm text-stone-700">
+              <input id="login-remember" type="checkbox" class="mt-1 h-4 w-4 rounded border-stone-300">
+              <span>Keep me signed in on this device</span>
+            </label>
+            <p class="mt-1 text-xs text-stone-500">Use only on a trusted device.</p>
+          </div>
 
-      <p class="mt-5 text-sm text-slate-400">
-        New here? <a href="signup.html" class="text-cyan-300 hover:underline">Create an account</a>.
-      </p>
+          <button id="login-submit" type="submit"
+            class="w-full rounded-md bg-emerald-700 px-4 py-2.5 font-medium text-white hover:bg-emerald-800 disabled:opacity-60">
+            Sign in
+          </button>
+        </form>
+
+        <p class="mt-6 text-sm text-stone-600">
+          New here? <a href="signup.html" class="font-medium text-emerald-800 hover:underline">Create account</a>
+        </p>
+      </div>
     </section>
   </main>
-
-  <footer class="border-t border-slate-800 bg-slate-900">
-    <div class="mx-auto max-w-6xl px-4 py-5 text-sm text-slate-400">
-      CivicEvents+ community desk. Contact the civic office if you need account help.
-    </div>
-  </footer>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="js/config.js"></script>

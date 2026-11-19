@@ -8,12 +8,23 @@ function civicAppShowPageMessage() {
   }
 }
 
+function civicAppFillUser(user) {
+  if (!user) {
+    return;
+  }
+
+  var role = user.role === "admin" ? "Administrator" : "Member";
+  $("#profile-menu-name").text(user.full_name || "Account");
+  $("#header-user-role").text(role);
+  $("#sidebar-user-name").text(user.full_name || "Account");
+  $("#sidebar-user-role").text(role);
+  $("#mobile-user-name").text(user.full_name || "Account");
+  $("#mobile-user-role").text(role);
+  $("#dashboard-user-name").text(user.full_name || "there");
+}
+
 function civicAppSetupHeader() {
   var user = CivicAuth.getUser();
-  if (user) {
-    $("#header-user-name").text(user.full_name || "User");
-    $("#header-user-role").text(user.role === "admin" ? "Administrator" : "Member");
-  }
 
   $("[data-admin-only]").addClass("hidden");
   $("[data-member-only]").addClass("hidden");
@@ -29,6 +40,8 @@ function civicAppSetupHeader() {
   if (CivicAuth.isMember()) {
     $("[data-member-only]").removeClass("hidden");
   }
+
+  civicAppFillUser(user);
 }
 
 function civicAppSetActiveNav() {
@@ -40,7 +53,7 @@ function civicAppSetActiveNav() {
   $("[data-nav]").each(function () {
     var link = $(this);
     if (link.attr("data-nav") === page) {
-      link.addClass("bg-slate-800 text-cyan-300");
+      link.addClass("bg-emerald-50 text-emerald-900 font-semibold");
       link.attr("aria-current", "page");
     }
   });
@@ -63,6 +76,35 @@ function civicAppSetupProfileMenu() {
     if ($(event.target).closest("#profile-menu-wrap").length === 0) {
       menu.classList.add("hidden");
       button.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+function civicAppSetupMobileMenu() {
+  var button = document.getElementById("mobile-menu-button");
+  var menu = document.getElementById("mobile-nav");
+  if (!button || !menu) {
+    return;
+  }
+
+  button.addEventListener("click", function () {
+    var expanded = button.getAttribute("aria-expanded") === "true";
+    button.setAttribute("aria-expanded", expanded ? "false" : "true");
+    menu.classList.toggle("hidden");
+  });
+
+  $("#mobile-nav a").on("click", function () {
+    menu.classList.add("hidden");
+    button.setAttribute("aria-expanded", "false");
+  });
+}
+
+function civicAppBindSearch(formId, inputId) {
+  $("#" + formId).on("submit", function (event) {
+    event.preventDefault();
+    var term = $("#" + inputId).val();
+    if (term) {
+      window.location.href = "events.html?q=" + encodeURIComponent(term);
     }
   });
 }
@@ -109,7 +151,7 @@ function civicAppStart() {
   // ROLE GUARD: block normal users from admin-only pages.
   // This protects the UI only. The API enforces the real permission check.
   if (requireAdmin && !CivicAuth.isAdmin()) {
-    sessionStorage.setItem("civic_page_message", "You do not have permission to open that admin page.");
+    sessionStorage.setItem("civic_page_message", "Permission denied.");
     window.location.href = "dashboard.html";
     return;
   }
@@ -117,7 +159,7 @@ function civicAppStart() {
   // ROLE GUARD: block admins from member-only pages such as the member dashboard.
   // Admins do not register for events or submit attendee feedback.
   if (memberPage && !CivicAuth.isMember()) {
-    sessionStorage.setItem("civic_page_message", "That page is for member accounts only.");
+    sessionStorage.setItem("civic_page_message", "This area is for member accounts.");
     window.location.href = "admin-dashboard.html";
     return;
   }
@@ -129,24 +171,15 @@ function civicAppStart() {
   civicAppSetupHeader();
   civicAppSetActiveNav();
   civicAppSetupProfileMenu();
+  civicAppSetupMobileMenu();
   civicAppLoadBellCount();
 
   $(".logout-button").on("click", function () {
     CivicAuth.logout();
   });
 
-  $("#global-search-form").on("submit", function (event) {
-    event.preventDefault();
-    var term = $("#global-search-input").val();
-    if (term) {
-      window.location.href = "events.html?q=" + encodeURIComponent(term);
-    }
-  });
-
-  var user = CivicAuth.getUser();
-  if (user && user.full_name) {
-    $("#profile-menu-name").text(user.full_name);
-  }
+  civicAppBindSearch("global-search-form", "global-search-input");
+  civicAppBindSearch("mobile-global-search-form", "mobile-global-search-input");
 }
 
 window.civicRefreshBell = civicAppLoadBellCount;

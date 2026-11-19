@@ -13,8 +13,8 @@ function civicProfileLoad() {
       document.getElementById("profile-role").textContent = user.role === "admin" ? "Administrator" : "Member";
       document.getElementById("profile-status").textContent = user.is_active ? "Active" : "Inactive";
       document.getElementById("profile-status").className = user.is_active
-        ? "mt-1 font-semibold text-emerald-300"
-        : "mt-1 font-semibold text-amber-300";
+        ? "mt-1 text-sm font-semibold text-emerald-700"
+        : "mt-1 text-sm font-semibold text-amber-700";
 
       document.getElementById("profile-loading").classList.add("hidden");
       document.getElementById("profile-content").classList.remove("hidden");
@@ -61,7 +61,7 @@ function civicProfileSubmit(event) {
       civicSetLoading(button, false);
       CivicAuth.updateStoredUser(user);
       $("#profile-menu-name").text(user.full_name || fullName);
-      CivicUI.showMessage("profile-message", "Profile updated successfully.", "success");
+      CivicUI.showMessage("profile-message", "Saved.", "success");
     })
     .fail(function (xhr) {
       civicSetLoading(button, false);

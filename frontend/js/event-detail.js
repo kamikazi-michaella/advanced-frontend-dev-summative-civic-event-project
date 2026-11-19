@@ -37,12 +37,10 @@ function civicEventDetailRender(event) {
   }
 
   if (isAdmin) {
-    status.classList.remove("hidden");
-    status.textContent = event.published === false ? "Unpublished event" : "Published event";
+    status.textContent = event.published === false ? "Draft" : "Live";
     status.className = event.published === false
-      ? "mt-2 hidden rounded bg-amber-900 px-2 py-1 text-xs text-amber-200"
-      : "mt-2 hidden rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200";
-    status.classList.remove("hidden");
+      ? "mt-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"
+      : "mt-2 rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800";
     document.getElementById("event-edit-link").href = "event-form.html?id=" + encodeURIComponent(event.id);
     document.getElementById("event-admin-actions").classList.remove("hidden");
   }
@@ -63,7 +61,7 @@ function civicEventDetailLoadAttendees() {
       var i;
 
       for (i = 0; i < attendees.length; i++) {
-        html = html + "<tr class=\"border-b border-slate-800\">" +
+        html = html + "<tr class=\"border-b border-stone-200\">" +
           "<td class=\"px-3 py-2\">" + civicEscapeHtml(attendees[i].full_name) + "</td>" +
           "<td class=\"px-3 py-2\">" + civicEscapeHtml(attendees[i].email) + "</td>" +
           "<td class=\"px-3 py-2\">" + civicEscapeHtml(civicFormatDate(attendees[i].created_at)) + "</td>" +
@@ -192,7 +190,7 @@ function civicFeedbackFormHtml(feedback) {
 
   var notice = "";
   if (civicFeedbackNotice) {
-    notice = '<div class="mb-3 rounded border border-emerald-700 bg-emerald-950 px-3 py-2 text-sm text-emerald-200" role="status">' +
+    notice = '<div class="mb-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">' +
       civicEscapeHtml(civicFeedbackNotice) + "</div>";
     civicFeedbackNotice = "";
   }
@@ -201,17 +199,17 @@ function civicFeedbackFormHtml(feedback) {
     '<div id="feedback-message" class="mb-3 hidden" role="alert"></div>' +
     '<form id="feedback-form" class="space-y-3" novalidate>' +
     "<div>" +
-    '<label for="feedback-rating" class="mb-1 block text-sm font-medium">Rating</label>' +
-    '<select id="feedback-rating" class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2">' +
+    '<label for="feedback-rating" class="mb-1 block text-sm font-medium text-stone-700">Rating</label>' +
+    '<select id="feedback-rating" class="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-stone-900">' +
     ratingOptions + "</select>" +
     "</div>" +
     "<div>" +
-    '<label for="feedback-comment" class="mb-1 block text-sm font-medium">Comment</label>' +
-    '<textarea id="feedback-comment" rows="4" class="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2">' +
+    '<label for="feedback-comment" class="mb-1 block text-sm font-medium text-stone-700">Comment</label>' +
+    '<textarea id="feedback-comment" rows="4" class="w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-stone-900">' +
     civicEscapeHtml(comment) + "</textarea>" +
-    '<p id="feedback-comment-error" class="mt-1 min-h-4 text-sm text-red-300"></p>' +
+    '<p id="feedback-comment-error" class="mt-1 min-h-4 text-sm text-red-700"></p>' +
     "</div>" +
-    '<button id="feedback-submit" type="submit" class="rounded bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60">' +
+    '<button id="feedback-submit" type="submit" class="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-60">' +
     (feedback ? "Update feedback" : "Submit feedback") + "</button>" +
     "</form>";
 }
@@ -255,7 +253,7 @@ function civicFeedbackSubmit(feedbackId) {
 
   request
     .done(function () {
-      civicFeedbackNotice = feedbackId ? "Feedback updated successfully." : "Feedback submitted successfully.";
+      civicFeedbackNotice = feedbackId ? "Updated." : "Submitted.";
       civicEventDetailLoadFeedback(true);
     })
     .fail(function (xhr) {
@@ -279,7 +277,7 @@ function civicEventDetailShowUserFeedback(feedback) {
 
 function civicEventDetailLoadAdminFeedback() {
   var content = document.getElementById("feedback-content");
-  content.innerHTML = '<p class="text-sm text-slate-400">Loading feedback...</p>';
+  content.innerHTML = '<p class="text-sm text-stone-500">Loading...</p>';
 
   CivicAPI.get("/event-feedback/event/" + encodeURIComponent(civicCurrentEventId) + "")
     .done(function (response) {
@@ -290,7 +288,7 @@ function civicEventDetailLoadAdminFeedback() {
       var i;
 
       if (feedbacks.length === 0) {
-        content.innerHTML = '<p class="text-sm text-slate-400">No feedback has been submitted for this event yet.</p>';
+        content.innerHTML = '<p class="text-sm text-stone-500">No feedback yet.</p>';
         return;
       }
 
@@ -299,16 +297,16 @@ function civicEventDetailLoadAdminFeedback() {
       }
       average = Math.round((sum / feedbacks.length) * 10) / 10;
 
-      html = '<div class="mb-4 rounded border border-slate-700 bg-slate-950 p-3 text-sm">' +
-        "Average rating: <strong class=\"text-cyan-300\">" + average + " / 5</strong> from " +
+      html = '<div class="mb-4 rounded-md border border-stone-200 bg-stone-50 p-3 text-sm text-stone-700">' +
+        "Average: <strong class=\"text-emerald-800\">" + average + " / 5</strong> from " +
         feedbacks.length + " response" + (feedbacks.length === 1 ? "" : "s") + "</div>" +
         '<div class="overflow-x-auto"><table class="min-w-full border-collapse text-left text-sm">' +
-        '<thead><tr class="border-b border-slate-700 text-slate-300">' +
+        '<thead><tr class="border-b border-stone-200 text-stone-500">' +
         '<th class="px-3 py-2">Member</th><th class="px-3 py-2">Rating</th>' +
         '<th class="px-3 py-2">Comment</th><th class="px-3 py-2">Submitted</th></tr></thead><tbody>';
 
       for (i = 0; i < feedbacks.length; i++) {
-        html = html + '<tr class="border-b border-slate-800">' +
+        html = html + '<tr class="border-b border-stone-200">' +
           '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].full_name || "Member") + "</td>" +
           '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].rating) + " / 5</td>" +
           '<td class="px-3 py-2">' + civicEscapeHtml(feedbacks[i].comment || "") + "</td>" +
@@ -321,7 +319,7 @@ function civicEventDetailLoadAdminFeedback() {
     })
     .fail(function (xhr) {
       var error = CivicAPI.handleFail(xhr, "Could not load event feedback.");
-      content.innerHTML = '<div class="rounded border border-red-700 bg-red-950 px-3 py-2 text-sm text-red-200" role="alert">' +
+      content.innerHTML = '<div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">' +
         civicEscapeHtml(error.message) + "</div>";
     });
 }
@@ -346,7 +344,7 @@ function civicEventDetailLoadFeedback(registered) {
   }
 
   section.classList.remove("hidden");
-  document.getElementById("feedback-content").innerHTML = '<p class="text-sm text-slate-400">Loading your feedback...</p>';
+  document.getElementById("feedback-content").innerHTML = '<p class="text-sm text-stone-500">Loading...</p>';
 
   CivicAPI.get("/event-feedback/my-feedback")
     .done(function (response) {
@@ -379,7 +377,7 @@ function civicEventDetailDelete() {
 
   CivicAPI.remove("/events/" + encodeURIComponent(civicCurrentEventId))
     .done(function () {
-      sessionStorage.setItem("civic_page_message", "Event deleted successfully.");
+      sessionStorage.setItem("civic_page_message", "Event deleted.");
       window.location.href = "events.html";
     })
     .fail(function (xhr) {

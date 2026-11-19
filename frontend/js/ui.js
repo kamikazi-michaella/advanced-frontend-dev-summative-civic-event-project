@@ -12,13 +12,13 @@ function civicShowMessage(containerId, message, type) {
     return;
   }
 
-  var style = "rounded border px-4 py-3 text-sm";
+  var style = "rounded-md border px-4 py-3 text-sm";
   if (type === "success") {
-    style = style + " border-emerald-700 bg-emerald-950 text-emerald-200";
+    style = style + " border-emerald-200 bg-emerald-50 text-emerald-800";
   } else if (type === "error") {
-    style = style + " border-red-700 bg-red-950 text-red-200";
+    style = style + " border-red-200 bg-red-50 text-red-700";
   } else {
-    style = style + " border-cyan-700 bg-cyan-950 text-cyan-100";
+    style = style + " border-stone-200 bg-white text-stone-700";
   }
 
   box.className = style;
@@ -72,9 +72,9 @@ function civicSetLoading(button, loading, loadingText) {
 function civicShowToast(message, type) {
   var toast = document.createElement("div");
   if (type === "error") {
-    toast.className = "civic-toast rounded border border-red-700 bg-red-950 px-4 py-3 text-sm text-red-100 shadow-lg";
+    toast.className = "civic-toast rounded-md border border-red-200 bg-white px-4 py-3 text-sm text-red-700 shadow-sm";
   } else {
-    toast.className = "civic-toast rounded border border-emerald-700 bg-emerald-950 px-4 py-3 text-sm text-emerald-100 shadow-lg";
+    toast.className = "civic-toast rounded-md border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-800 shadow-sm";
   }
   toast.setAttribute("role", "status");
   toast.textContent = message;

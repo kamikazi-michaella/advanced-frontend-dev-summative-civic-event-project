@@ -94,13 +94,13 @@ function civicPromoRender(promo) {
   if (isAdmin) {
     status.classList.remove("hidden");
     if (promo.published === false) {
-      status.textContent = "Unpublished promo";
-      status.className = "mt-2 rounded bg-amber-900 px-2 py-1 text-xs text-amber-200";
+      status.textContent = "Draft promo";
+      status.className = "mt-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800";
       publishButton.textContent = "Publish";
       publishButton.setAttribute("data-action", "publish");
     } else {
-      status.textContent = "Published promo";
-      status.className = "mt-2 rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200";
+      status.textContent = "Live promo";
+      status.className = "mt-2 rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800";
       publishButton.textContent = "Unpublish";
       publishButton.setAttribute("data-action", "unpublish");
     }
@@ -156,7 +156,7 @@ function civicPromoTogglePublish() {
     .done(function (response) {
       civicSetLoading(button, false);
       civicPromoRender(response.data || civicPromoCurrent);
-      CivicUI.showMessage("promo-message", action === "publish" ? "Promo published." : "Promo unpublished.", "success");
+      CivicUI.showMessage("promo-message", action === "publish" ? "Published." : "Unpublished.", "success");
     })
     .fail(function (xhr) {
       civicSetLoading(button, false);
@@ -174,7 +174,7 @@ function civicPromoDelete() {
 
   CivicAPI.remove("/promos/" + encodeURIComponent(civicPromoId))
     .done(function () {
-      sessionStorage.setItem("civic_page_message", "Promo deleted successfully.");
+      sessionStorage.setItem("civic_page_message", "Promo deleted.");
       window.location.href = "promos.html";
     })
     .fail(function (xhr) {

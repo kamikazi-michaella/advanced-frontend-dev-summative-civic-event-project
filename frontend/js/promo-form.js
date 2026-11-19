@@ -109,12 +109,12 @@ function civicPromoFormSubmit(event) {
   var button = document.getElementById("promo-form-submit");
   var url = "/promos";
   var method = "POST";
-  var message = "Promo created successfully.";
+  var message = "Promo created.";
 
   if (civicPromoFormId) {
     url = "/promos/" + encodeURIComponent(civicPromoFormId);
     method = "PUT";
-    message = "Promo updated successfully.";
+    message = "Promo updated.";
   }
 
   civicSetLoading(button, true, "Saving...");

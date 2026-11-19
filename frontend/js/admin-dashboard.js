@@ -27,14 +27,15 @@ function civicAdminGrowthChart(growth) {
   for (i = 0; i < growth.length; i++) {
     var count = Number(growth[i].new_users || 0);
     var height = Math.round((count / max) * 150);
+    var barColor = i % 2 === 0 ? "bg-emerald-700" : "bg-amber-500";
     if (height < 4) {
       height = 4;
     }
     html = html + '<div class="flex min-w-16 flex-col items-center justify-end gap-1">' +
-      '<span class="text-xs text-slate-300">' + count + "</span>" +
-      '<div class="w-8 rounded-t bg-cyan-500" style="height:' + height + 'px" title="' +
+      '<span class="text-xs text-stone-600">' + count + "</span>" +
+      '<div class="w-8 rounded-t ' + barColor + '" style="height:' + height + 'px" title="' +
       civicEscapeHtml(growth[i].month) + ": " + count + ' new users"></div>' +
-      '<span class="text-xs text-slate-400">' + civicEscapeHtml(growth[i].month) + "</span>" +
+      '<span class="text-xs text-stone-500">' + civicEscapeHtml(growth[i].month) + "</span>" +
       "</div>";
   }
 

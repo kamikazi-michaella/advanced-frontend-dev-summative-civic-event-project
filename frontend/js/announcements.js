@@ -1,38 +1,36 @@
-function civicAnnouncementCard(item, isAdmin, index) {
+function civicAnnouncementRow(item, isAdmin, index) {
   var status = "";
   if (isAdmin) {
     status = item.published === false
-      ? '<span class="rounded bg-amber-900 px-2 py-1 text-xs text-amber-200">Unpublished</span>'
-      : '<span class="rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200">Published</span>';
+      ? '<span class="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Draft</span>'
+      : '<span class="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">Live</span>';
   }
 
   var edit = "";
   // ROLE GUARD: admin edit controls are only rendered for admins.
   if (isAdmin) {
     edit = '<a href="announcement-form.html?id=' + encodeURIComponent(item.id) +
-      '" class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">Edit</a>';
+      '" class="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">Edit</a>';
   }
 
   var durationId = "announcement-duration-" + index;
-  var audioId = "announcement-audio-" + index;
   var audioUrl = civicEscapeHtml(item.audio_url || "");
 
-  return '<article class="rounded-lg border border-slate-800 bg-slate-900 p-5">' +
-    '<div class="flex flex-wrap items-start justify-between gap-3">' +
-    '<div><h2 class="text-xl font-semibold text-cyan-300">' + civicEscapeHtml(item.title) + "</h2>" +
-    '<p class="mt-1 text-sm text-slate-400">Created ' + civicEscapeHtml(civicFormatDate(item.created_at)) + "</p></div>" +
-    status + "</div>" +
-    '<div class="mt-4">' +
-    '<audio id="' + audioId + '" controls preload="metadata" src="' + audioUrl +
-    '" data-duration-target="' + durationId + '" aria-label="Audio for ' + civicEscapeHtml(item.title) + '">' +
-    'Your browser cannot play this audio. <a href="' + audioUrl + '">Open the audio file</a>.' +
+  return '<article class="flex flex-col gap-4 p-4 sm:flex-row sm:items-center">' +
+    '<div class="min-w-0 flex-1">' +
+    '<div class="flex flex-wrap items-center gap-2">' +
+    '<h2 class="font-serif text-xl text-stone-900">' + civicEscapeHtml(item.title) + "</h2>" + status + "</div>" +
+    '<p class="mt-1 text-sm text-stone-500">' + civicEscapeHtml(civicFormatDate(item.created_at)) + "</p>" +
+    '<div class="mt-3 max-w-md">' +
+    '<audio controls preload="metadata" src="' + audioUrl + '" data-duration-target="' + durationId +
+    '" aria-label="Audio for ' + civicEscapeHtml(item.title) + '" class="h-9 w-full">' +
+    'Your browser cannot play this audio. <a href="' + audioUrl + '">Open audio file</a>.' +
     "</audio>" +
-    '<p class="mt-2 text-sm text-slate-400">Duration: <span id="' + durationId + '">Loading...</span></p>' +
-    '<p class="mt-1 text-xs text-slate-500"><a href="' + audioUrl + '" class="text-cyan-300 hover:underline">Direct audio link</a></p>' +
-    "</div>" +
-    '<div class="mt-4 flex flex-wrap gap-2">' +
+    '<p class="mt-1 text-xs text-stone-500">Duration: <span id="' + durationId + '">Loading...</span></p>' +
+    "</div></div>" +
+    '<div class="flex shrink-0 flex-wrap items-center gap-2">' +
     '<a href="announcement-detail.html?id=' + encodeURIComponent(item.id) +
-    '" class="rounded bg-cyan-500 px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400">Open announcement</a>' +
+    '" class="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800">Open</a>' +
     edit + "</div></article>";
 }
 
@@ -49,7 +47,7 @@ function civicAnnouncementsBindDurations() {
     audio.addEventListener("error", function () {
       var target = document.getElementById(targetId);
       if (target) {
-        target.textContent = "Duration unavailable";
+        target.textContent = "Unavailable";
       }
     });
   });
@@ -62,7 +60,7 @@ function civicAnnouncementsRender(items) {
   var i;
 
   for (i = 0; i < items.length; i++) {
-    html = html + civicAnnouncementCard(items[i], isAdmin, i);
+    html = html + civicAnnouncementRow(items[i], isAdmin, i);
   }
   list.innerHTML = html;
   civicAnnouncementsBindDurations();

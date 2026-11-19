@@ -4,18 +4,15 @@ function civicRegistrationsRender(items) {
   var i;
 
   for (i = 0; i < items.length; i++) {
-    html = html + '<article class="rounded-lg border border-slate-800 bg-slate-900 p-4">' +
-      '<div class="flex flex-wrap items-start justify-between gap-3">' +
-      '<div><h2 class="text-lg font-semibold text-cyan-300">' + civicEscapeHtml(items[i].title) + "</h2>" +
-      '<p class="mt-1 text-sm text-slate-300">' + civicEscapeHtml(civicFormatDate(items[i].starts_at)) + "</p>" +
-      '<p class="mt-1 text-sm text-slate-400">' + civicEscapeHtml(items[i].location || "Location not provided") + "</p></div>" +
-      '<span class="rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200">Registered</span>' +
-      "</div>" +
-      '<div class="mt-4 flex flex-wrap gap-2">' +
+    html = html + '<article class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">' +
+      '<div><h2 class="font-serif text-lg text-stone-900">' + civicEscapeHtml(items[i].title) + "</h2>" +
+      '<p class="mt-1 text-sm text-stone-600">' + civicEscapeHtml(civicFormatDate(items[i].starts_at)) + "</p>" +
+      '<p class="text-sm text-stone-500">' + civicEscapeHtml(items[i].location || "Location not provided") + "</p></div>" +
+      '<div class="flex shrink-0 flex-wrap gap-2">' +
       '<a href="event-detail.html?id=' + encodeURIComponent(items[i].event_id) +
-      '" class="rounded border border-slate-600 px-3 py-2 text-sm hover:bg-slate-800">View event</a>' +
-      '<button type="button" class="rounded border border-red-700 px-3 py-2 text-sm text-red-200 hover:bg-red-950" data-cancel-event="' +
-      civicEscapeHtml(items[i].event_id) + '">Cancel registration</button>' +
+      '" class="rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:bg-stone-100">View</a>' +
+      '<button type="button" class="rounded-md border border-red-300 bg-white px-3 py-2 text-sm text-red-700 hover:bg-red-50" data-cancel-event="' +
+      civicEscapeHtml(items[i].event_id) + '">Cancel</button>' +
       "</div></article>";
   }
 
@@ -65,7 +62,7 @@ function civicRegistrationCancel(eventId) {
 
   CivicAPI.postJson("/event-registrations/cancel", { event_id: eventId })
     .done(function () {
-      CivicUI.showMessage("registrations-message", "Registration cancelled. The backend keeps the cancelled row.", "success");
+      CivicUI.showMessage("registrations-message", "Registration cancelled.", "success");
       civicRegistrationsLoad();
     })
     .fail(function (xhr) {

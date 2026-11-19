@@ -1,9 +1,16 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-serif {
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 a:focus-visible,
@@ -11,7 +18,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #22d3ee;
+  outline: 2px solid #047857;
   outline-offset: 2px;
 }
 
@@ -27,24 +34,38 @@ textarea:focus-visible {
   height: 0.4rem;
   flex: 1 1 0%;
   border-radius: 9999px;
-  background-color: #334155;
+  background-color: #e7e5e4;
 }
 
 .password-bar.active-weak {
-  background-color: #ef4444;
+  background-color: #dc2626;
 }
 
 .password-bar.active-medium {
-  background-color: #f59e0b;
+  background-color: #d97706;
 }
 
 .password-bar.active-strong {
-  background-color: #22c55e;
+  background-color: #047857;
 }
 
 .media-fallback {
-  border: 1px dashed #475569;
-  border-radius: 0.5rem;
+  border: 1px dashed #d6d3d1;
+  border-radius: 0.375rem;
   padding: 1rem;
-  color: #cbd5e1;
+  color: #57534e;
+}
+
+.desktop-table {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktop-table {
+    display: block;
+  }
+}
+
+table {
+  border-color: #e7e5e4;
 }

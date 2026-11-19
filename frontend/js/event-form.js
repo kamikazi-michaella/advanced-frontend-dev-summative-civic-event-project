@@ -164,7 +164,7 @@ function civicEventFormSubmit(event) {
       if (response.data && response.data.id) {
         id = response.data.id;
       }
-      sessionStorage.setItem("civic_page_message", civicEventFormId ? "Event updated successfully." : "Event created successfully.");
+      sessionStorage.setItem("civic_page_message", civicEventFormId ? "Event updated." : "Event created.");
       window.location.href = "event-detail.html?id=" + encodeURIComponent(id);
     })
     .fail(function (xhr) {

@@ -33,13 +33,13 @@ function civicAnnouncementRender(item) {
   if (isAdmin) {
     status.classList.remove("hidden");
     if (item.published === false) {
-      status.textContent = "Unpublished announcement";
-      status.className = "mt-2 rounded bg-amber-900 px-2 py-1 text-xs text-amber-200";
+      status.textContent = "Draft notice";
+      status.className = "mt-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800";
       publishButton.textContent = "Publish";
       publishButton.setAttribute("data-action", "publish");
     } else {
-      status.textContent = "Published announcement";
-      status.className = "mt-2 rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200";
+      status.textContent = "Live notice";
+      status.className = "mt-2 rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800";
       publishButton.textContent = "Unpublish";
       publishButton.setAttribute("data-action", "unpublish");
     }
@@ -90,7 +90,7 @@ function civicAnnouncementTogglePublish() {
     .done(function (response) {
       civicSetLoading(button, false);
       civicAnnouncementRender(response.data || civicAnnouncementCurrent);
-      CivicUI.showMessage("announcement-message", action === "publish" ? "Announcement published." : "Announcement unpublished.", "success");
+      CivicUI.showMessage("announcement-message", action === "publish" ? "Published." : "Unpublished.", "success");
     })
     .fail(function (xhr) {
       civicSetLoading(button, false);
@@ -108,7 +108,7 @@ function civicAnnouncementDelete() {
 
   CivicAPI.remove("/announcements/" + encodeURIComponent(civicAnnouncementId))
     .done(function () {
-      sessionStorage.setItem("civic_page_message", "Announcement deleted successfully.");
+      sessionStorage.setItem("civic_page_message", "Notice deleted.");
       window.location.href = "announcements.html";
     })
     .fail(function (xhr) {

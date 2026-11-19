@@ -67,7 +67,7 @@ function civicSignupStart() {
 
     CivicAPI.publicPost("/auth/signup", data)
       .done(function () {
-        sessionStorage.setItem("civic_flash", "Account created successfully. Please log in.");
+        sessionStorage.setItem("civic_flash", "Account created. Sign in.");
         window.location.href = "login.html";
       })
       .fail(function (xhr) {

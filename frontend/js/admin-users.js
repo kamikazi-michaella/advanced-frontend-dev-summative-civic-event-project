@@ -25,14 +25,36 @@ function civicUsersApplyFilter(resetPage) {
   civicUsersRender();
 }
 
+function civicUsersStatus(user) {
+  if (user.is_active) {
+    return '<span class="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">Active</span>';
+  }
+  return '<span class="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Inactive</span>';
+}
+
+function civicUsersAction(user, currentUser) {
+  if (currentUser && currentUser.id === user.id) {
+    // ROLE GUARD: keep the current admin from disabling their own account.
+    return '<span class="text-xs text-stone-500">Current account</span>';
+  }
+  if (user.is_active) {
+    return '<button type="button" class="rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs text-red-700 hover:bg-red-50" data-user-action="disable" data-user-id="' +
+      civicEscapeHtml(user.id) + '">Disable</button>';
+  }
+  return '<button type="button" class="rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-xs text-emerald-800 hover:bg-emerald-50" data-user-action="enable" data-user-id="' +
+    civicEscapeHtml(user.id) + '">Enable</button>';
+}
+
 function civicUsersRender() {
   var totalPages = Math.ceil(civicUsersFiltered.length / civicUsersPerPage);
   var start = (civicUsersPage - 1) * civicUsersPerPage;
   var end = start + civicUsersPerPage;
   var body = document.getElementById("users-table-body");
+  var mobile = document.getElementById("users-mobile-list");
   var pagination = document.getElementById("users-pagination");
   var currentUser = CivicAuth.getUser();
   var html = "";
+  var mobileHtml = "";
   var pageHtml = "";
   var i;
 
@@ -47,49 +69,45 @@ function civicUsersRender() {
 
   for (i = start; i < end && i < civicUsersFiltered.length; i++) {
     var user = civicUsersFiltered[i];
-    var status = user.is_active
-      ? '<span class="rounded bg-emerald-900 px-2 py-1 text-xs text-emerald-200">Active</span>'
-      : '<span class="rounded bg-amber-900 px-2 py-1 text-xs text-amber-200">Inactive</span>';
-    var action = "";
-
-    if (currentUser && currentUser.id === user.id) {
-      // ROLE GUARD: keep the current admin from disabling their own account.
-      action = '<span class="text-xs text-slate-400">Current account</span>';
-    } else if (user.is_active) {
-      action = '<button type="button" class="rounded border border-red-700 px-3 py-1.5 text-xs text-red-200 hover:bg-red-950" data-user-action="disable" data-user-id="' +
-        civicEscapeHtml(user.id) + '">Disable</button>';
-    } else {
-      action = '<button type="button" class="rounded border border-emerald-700 px-3 py-1.5 text-xs text-emerald-200 hover:bg-emerald-950" data-user-action="enable" data-user-id="' +
-        civicEscapeHtml(user.id) + '">Enable</button>';
-    }
-
-    html = html + "<tr class=\"border-b border-slate-800\">" +
-      '<td class="px-4 py-3">' + civicEscapeHtml(user.full_name) + "</td>" +
-      '<td class="px-4 py-3">' + civicEscapeHtml(user.email) + "</td>" +
-      '<td class="px-4 py-3">' + civicEscapeHtml(user.role) + "</td>" +
-      '<td class="px-4 py-3">' + status + "</td>" +
-      '<td class="px-4 py-3">' + action + "</td>" +
+    html = html + '<tr class="border-b border-stone-200">' +
+      '<td class="px-4 py-3 text-stone-900">' + civicEscapeHtml(user.full_name) + "</td>" +
+      '<td class="px-4 py-3 text-stone-600">' + civicEscapeHtml(user.email) + "</td>" +
+      '<td class="px-4 py-3 text-stone-600">' + civicEscapeHtml(user.role) + "</td>" +
+      '<td class="px-4 py-3">' + civicUsersStatus(user) + "</td>" +
+      '<td class="px-4 py-3">' + civicUsersAction(user, currentUser) + "</td>" +
       "</tr>";
+
+    mobileHtml = mobileHtml + '<article class="rounded-md border border-stone-200 bg-white p-4">' +
+      '<div class="flex items-start justify-between gap-3">' +
+      '<div><p class="font-medium text-stone-900">' + civicEscapeHtml(user.full_name) + "</p>" +
+      '<p class="mt-1 text-sm text-stone-600">' + civicEscapeHtml(user.email) + "</p></div>" +
+      civicUsersStatus(user) + "</div>" +
+      '<div class="mt-3 flex items-center justify-between text-xs text-stone-500">' +
+      "<span>" + civicEscapeHtml(user.role) + "</span>" + civicUsersAction(user, currentUser) + "</div></article>";
   }
 
   body.innerHTML = html;
+  mobile.innerHTML = mobileHtml;
+
   document.getElementById("users-count").textContent =
-    "Showing " + civicUsersFiltered.length + " user" + (civicUsersFiltered.length === 1 ? "" : "s") + ".";
+    civicUsersFiltered.length + " user" + (civicUsersFiltered.length === 1 ? "" : "s");
 
   if (civicUsersFiltered.length === 0) {
     document.getElementById("users-empty").classList.remove("hidden");
     document.getElementById("users-table-wrap").classList.add("hidden");
+    mobile.classList.add("hidden");
   } else {
     document.getElementById("users-empty").classList.add("hidden");
     document.getElementById("users-table-wrap").classList.remove("hidden");
+    mobile.classList.remove("hidden");
   }
 
   for (i = 1; i <= totalPages; i++) {
-    var style = "rounded border px-3 py-2 text-sm ";
+    var style = "rounded-md border px-3 py-2 text-sm ";
     if (i === civicUsersPage) {
-      style = style + "border-cyan-500 bg-cyan-500 font-semibold text-slate-950";
+      style = style + "border-emerald-700 bg-emerald-700 font-medium text-white";
     } else {
-      style = style + "border-slate-600 text-slate-200 hover:bg-slate-800";
+      style = style + "border-stone-300 bg-white text-stone-700 hover:bg-stone-100";
     }
     pageHtml = pageHtml + '<button type="button" class="' + style + '" data-page="' + i + '">' + i + "</button>";
   }
@@ -122,7 +140,7 @@ function civicUsersChangeStatus(userId, action) {
           civicUsersAll[i].is_active = updated.is_active;
         }
       }
-      CivicUI.showMessage("users-message", "User " + label + "d successfully.", "success");
+      CivicUI.showMessage("users-message", action === "disable" ? "User disabled." : "User enabled.", "success");
       civicUsersApplyFilter(false);
     })
     .fail(function (xhr) {

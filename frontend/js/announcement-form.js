@@ -68,7 +68,7 @@ function civicAnnouncementCreate(event) {
   CivicAPI.upload("/announcements", "POST", formData)
     .done(function (response) {
       var id = response.data ? response.data.id : "";
-      sessionStorage.setItem("civic_announcement_flash", "Announcement created successfully.");
+      sessionStorage.setItem("civic_announcement_flash", "Notice created.");
       window.location.href = "announcement-detail.html?id=" + encodeURIComponent(id);
     })
     .fail(function (xhr) {
@@ -98,7 +98,7 @@ function civicAnnouncementEdit(event) {
     .done(function () {
       if (desiredPublished === civicAnnouncementOriginalPublished) {
         civicSetLoading(button, false);
-        civicAnnouncementFormGoToDetail(civicAnnouncementFormId, "Announcement updated successfully.");
+        civicAnnouncementFormGoToDetail(civicAnnouncementFormId, "Notice updated.");
         return;
       }
 
@@ -106,7 +106,7 @@ function civicAnnouncementEdit(event) {
       CivicAPI.patchJson("/announcements/" + encodeURIComponent(civicAnnouncementFormId) + "/" + action, {})
         .done(function () {
           civicSetLoading(button, false);
-          civicAnnouncementFormGoToDetail(civicAnnouncementFormId, "Announcement updated successfully.");
+          civicAnnouncementFormGoToDetail(civicAnnouncementFormId, "Notice updated.");
         })
         .fail(function (xhr) {
           civicSetLoading(button, false);
